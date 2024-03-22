@@ -5,6 +5,6 @@ import { IoTCommunicationGateway } from './iot-communication.gateway';
   imports: [],
   controllers: [],
   providers: [IoTCommunicationGateway],
-  exports: [IoTCommunicationGateway],
+  exports: [],
 })
 export class IoTCommunicationModule {}
