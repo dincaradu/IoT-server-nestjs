@@ -10,22 +10,25 @@ import {
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 
-import { EventName, MessagePayload } from './iot-communication.interface';
+import { EventName, KeepAlivePayload } from './iot-communication.interface';
 
-@WebSocketGateway()
+@WebSocketGateway({
+  cors: {
+    origin: '*',
+    methods: ['GET', 'POST'],
+  },
+})
 export class IoTCommunicationGateway
   implements OnGatewayConnection, OnGatewayDisconnect
 {
-  @WebSocketServer() server: Server = new Server();
+  @WebSocketServer() server: Server;
 
   private _logger = new Logger('CanvasGateway');
 
-  @SubscribeMessage(EventName.MESSAGE)
-  handleMessage(
-    @ConnectedSocket client: Socket,
-    @MessageBody payload: MessagePayload,
-  ): string {
-    return 'Hello world!';
+  @SubscribeMessage(EventName.KeepAlive)
+  handleMessage(client: Socket, payload: KeepAlivePayload): void {
+    this._logger.log(`Received message: ${JSON.stringify(payload)}`);
+    // this.server.emit(EventName.KeepAlive, 'thank you for your keep-alive message');
   }
 
   async handleConnection(socket: Socket): Promise<void> {
